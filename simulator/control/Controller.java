@@ -1,8 +1,6 @@
 package simulator.control;
 
 import simulator.model.*;
-import simulator.model.IllegalArgumentException;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;

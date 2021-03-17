@@ -1,5 +1,7 @@
 package simulator.launcher;
 
+import java.util.ArrayList;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -10,9 +12,19 @@ import org.apache.commons.cli.ParseException;
 import org.json.JSONObject;
 
 import simulator.control.StateComparator;
+import simulator.factories.BasicBodyBuilder;
+import simulator.factories.Builder;
+import simulator.factories.BuilderBasedFactory;
+import simulator.factories.EpsilonEqualStatesBuilder;
 import simulator.factories.Factory;
+import simulator.factories.MassEqualStatesBuilder;
+import simulator.factories.MassLosingBodyBuilder;
+import simulator.factories.MovingTowardsFixedPointBuilder;
+import simulator.factories.NewtonUniversalGravitationBuilder;
+import simulator.factories.NoForceBuilder;
 import simulator.model.Body;
 import simulator.model.ForceLaws;
+import simulator.model.NoForce;
 
 public class Main {
 
@@ -35,11 +47,21 @@ public class Main {
 	private static Factory<StateComparator> _stateComparatorFactory;
 
 	private static void init() {
-		// TODO initialize the bodies factory
+		ArrayList<Builder<Body>> bodyBuilders = new ArrayList<>();
+		bodyBuilders.add(new BasicBodyBuilder());
+		bodyBuilders.add(new MassLosingBodyBuilder());
+		_bodyFactory = new BuilderBasedFactory<Body>(bodyBuilders);
+		
+		ArrayList<Builder<ForceLaws>> forceLaws = new ArrayList<>();
+		forceLaws.add(new NewtonUniversalGravitationBuilder());
+		forceLaws.add(new MovingTowardsFixedPointBuilder());
+		forceLaws.add(new NoForceBuilder());
+		_forceLawsFactory = new BuilderBasedFactory<ForceLaws>(forceLaws);
 
-		// TODO initialize the force laws factory
-
-		// TODO initialize the state comparator
+		ArrayList<Builder<StateComparator>> stateComparator = new ArrayList<>();
+		stateComparator.add(new MassEqualStatesBuilder());
+		stateComparator.add(new EpsilonEqualStatesBuilder());
+		_stateComparatorFactory = new BuilderBasedFactory<StateComparator>(stateComparator);
 	}
 
 	private static void parseArgs(String[] args) {

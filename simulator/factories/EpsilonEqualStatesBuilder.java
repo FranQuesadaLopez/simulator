@@ -3,8 +3,9 @@ package simulator.factories;
 import org.json.JSONObject;
 
 import simulator.control.EpsilonEqualStates;
+import simulator.control.StateComparator;
 
-public class EpsilonEqualStatesBuilder extends Builder<EpsilonEqualStates>{
+public class EpsilonEqualStatesBuilder extends Builder<StateComparator>{
 
 	public EpsilonEqualStatesBuilder() {
 		typeTag = "epseq";
