@@ -1,6 +1,7 @@
 package simulator.control;
 
 import simulator.model.*;
+import simulator.model.IllegalArgumentException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,14 +20,12 @@ public class Controller {
 		this._ps = ps;
 		this._b = b;
 	}
-	
-	public void loadBodies(InputStream in) {
-		
+
+	public void loadBodies(InputStream in) throws IllegalArgumentException{
 		JSONObject jsonInput = new JSONObject(new JSONTokener(in));
-		
-		//TODO Crear cada cuerpo con la factoría
-		
-		//TODO Añadir el cuerpo al PysiscSimulator con addBody
+		for(int i = 0; i < jsonInput.getJSONArray("bodies").length(); ++i) {
+			_ps.addBody(_b.createInstance(jsonInput.getJSONArray("bodies").getJSONObject(i)));
+		}
 	}
 	
 	public void run (int n, OutputStream out, InputStream expOut, StateComparator cmp)

@@ -3,9 +3,10 @@ package simulator.factories;
 import org.json.JSONObject;
 
 import simulator.misc.Vector2D;
+import simulator.model.Body;
 import simulator.model.MassLossingBody;
 
-public class MassLosingBodyBuilder extends Builder<MassLossingBody>{
+public class MassLosingBodyBuilder extends Builder<Body>{
 	
 	public MassLosingBodyBuilder() {
 		typeTag = "mlb";
