@@ -24,15 +24,16 @@ public class NewtonUniversalGravitation implements ForceLaws{
 				b1._a = new Vector2D();
 			}
 			while(it_j.hasNext()) {
-				if(it_i != it_j) {
-					Body b2 = it_j.next();
-					b1.addForce(calculateForceVector(b1, b2));
-				}	
+				Body b2 = it_j.next();
+				if(it_i != it_j) 
+					b1.addForce(calculateForceVector(b1, b2));	
 			}
 		}
 	}
 	
 	private Vector2D calculateForceVector(Body b1, Body b2) {
+		if(b1._p.distanceTo(b2._p) == 0)
+			return new Vector2D();
 		double module = G * b1._m * b2._m / b1._p.distanceTo(b2._p);
 		return ((b2._p.minus(b1._p)).direction()).scale(module);
 	}
