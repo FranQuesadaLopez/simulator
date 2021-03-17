@@ -13,14 +13,11 @@ public class PhysicsSimulator {
 	double t;
 	List<Body> bodies;
 	
-	public PhysicsSimulator(String _dt, ForceLaws _fl) throws IllegalArgumentException{
-		try {
-			Double.parseDouble(_dt);
-		}
-		catch(NumberFormatException nfe) {
+	public PhysicsSimulator(double _dt, ForceLaws _fl) throws IllegalArgumentException{
+		if(_dt < 0)
 			throw new IllegalArgumentException();
-		}
-		dt = Double.parseDouble(_dt);
+		else
+			dt = _dt;
 		if(_fl == null)
 			throw new IllegalArgumentException();
 		FL = _fl;

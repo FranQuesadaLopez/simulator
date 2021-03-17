@@ -1,5 +1,8 @@
 package simulator.launcher;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
@@ -11,6 +14,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.json.JSONObject;
 
+import simulator.control.Controller;
 import simulator.control.StateComparator;
 import simulator.factories.BasicBodyBuilder;
 import simulator.factories.Builder;
@@ -24,7 +28,7 @@ import simulator.factories.NewtonUniversalGravitationBuilder;
 import simulator.factories.NoForceBuilder;
 import simulator.model.Body;
 import simulator.model.ForceLaws;
-import simulator.model.NoForce;
+import simulator.model.PhysicsSimulator;
 
 public class Main {
 
@@ -33,11 +37,15 @@ public class Main {
 	private final static Double _dtimeDefaultValue = 2500.0;
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "epseq";
+	private final static String _outFileDefaultValue = "System.out";
 
 	// some attributes to stores values corresponding to command-line parameters
 	//
 	private static Double _dtime = null;
+	private static Integer _steps = null;
 	private static String _inFile = null;
+	private static String _outFile = null;
+	private static String _expectedOutput = null;
 	private static JSONObject _forceLawsInfo = null;
 	private static JSONObject _stateComparatorInfo = null;
 
@@ -78,8 +86,10 @@ public class Main {
 
 			parseHelpOption(line, cmdLineOptions);
 			parseInFileOption(line);
-			// TODO add support of -o, -eo, and -s (define corresponding parse methods)
+			parseOutFileOption(line);
+			parseExpectedOutputOption(line);
 
+			parseStepOption(line);
 			parseDeltaTimeOption(line);
 			parseForceLawsOption(line);
 			parseStateComparatorOption(line);
@@ -110,9 +120,17 @@ public class Main {
 
 		// input file
 		cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("Bodies JSON input file.").build());
-
-		// TODO add support for -o, -eo, and -s (add corresponding information to
-		// cmdLineOptions)
+		
+		//output file
+		cmdLineOptions.addOption(Option.builder("o").longOpt("output").hasArg().desc("simulator output file").build());
+		
+		//expected output file
+		cmdLineOptions.addOption(Option.builder("eo").longOpt("expected output").hasArg().desc("expected output from simulator")
+				.build());
+		
+		//steps
+		cmdLineOptions.addOption(Option.builder("s").longOpt("steps").hasArg()
+				.desc("Number of steps the simulator is going to do.").build());
 
 		// delta-time
 		cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").hasArg()
@@ -168,6 +186,14 @@ public class Main {
 			throw new ParseException("In batch mode an input file of bodies is required");
 		}
 	}
+	
+	private static void parseOutFileOption(CommandLine line) {
+		_outFile = line.getOptionValue("o", _outFileDefaultValue);
+	}
+	
+	private static void parseExpectedOutputOption(CommandLine line) {
+		_expectedOutput = line.getOptionValue("eo");
+	}
 
 	private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
 		String dt = line.getOptionValue("dt", _dtimeDefaultValue.toString());
@@ -176,6 +202,17 @@ public class Main {
 			assert (_dtime > 0);
 		} catch (Exception e) {
 			throw new ParseException("Invalid delta-time value: " + dt);
+		}
+	}
+	
+	private static void parseStepOption(CommandLine line) throws ParseException{
+		String steps = line.getOptionValue("s");
+		try {
+			_steps = Integer.parseInt(steps);
+			assert (_steps >= 0);
+		}
+		catch (Exception e) {
+			throw new ParseException("Invalid number of steps: " + steps);
 		}
 	}
 
@@ -234,7 +271,11 @@ public class Main {
 	}
 
 	private static void startBatchMode() throws Exception {
-		// TODO complete this method
+		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
+		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
+		Controller controller = new Controller(ps, _bodyFactory);
+		controller.loadBodies(new FileInputStream(new File(_inFile)));
+		controller.run(_steps, new FileOutputStream(new File(_outFile)), new FileInputStream(new File(_expectedOutput)), cmp);	
 	}
 
 	private static void start(String[] args) throws Exception {
