@@ -46,7 +46,7 @@ public class Controller {
 		
 		for (int i = 0; i < n; ++i) {
 			_ps.advance();
-			p.println(_ps.toString());
+			p.println("," + _ps.toString());
 			
 			if(expOutNotNull && !cmp.equal(ja.getJSONObject(i), _ps.getState())) {
 				String msg = new String(

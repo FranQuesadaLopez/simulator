@@ -275,7 +275,12 @@ public class Main {
 		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
 		Controller controller = new Controller(ps, _bodyFactory);
 		controller.loadBodies(new FileInputStream(new File(_inFile)));
-		controller.run(_steps, new FileOutputStream(new File(_outFile)), new FileInputStream(new File(_expectedOutput)), cmp);	
+		FileInputStream expOut;
+		if(_expectedOutput == null)
+			expOut = null;
+		else
+			expOut = new FileInputStream(new File(_expectedOutput));
+		controller.run(_steps, new FileOutputStream(new File(_outFile)), expOut, cmp);	
 	}
 
 	private static void start(String[] args) throws Exception {

@@ -1,5 +1,6 @@
 package simulator.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class PhysicsSimulator {
 			throw new IllegalArgumentException();
 		FL = _fl;
 		t = 0.0;
+		bodies = new ArrayList<>();
 	}
 	
 	public void advance() {
@@ -31,11 +33,12 @@ public class PhysicsSimulator {
 			b.resetForce();
 		}
 		FL.apply(bodies);
-		while(it.hasNext()) {
-			Body b = it.next();
+		Iterator<Body> it_ = bodies.listIterator();
+		while(it_.hasNext()) {
+			Body b = it_.next();
 			b.move(dt);
-			t += dt;
 		}
+		t += dt;
 	}
 	
 	public void addBody(Body b) throws IllegalArgumentException{

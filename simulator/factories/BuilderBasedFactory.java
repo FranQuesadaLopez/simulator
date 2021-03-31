@@ -22,7 +22,6 @@ public class BuilderBasedFactory <T> implements Factory<T>{
 		ListIterator<Builder<T>> it = _builders.listIterator();
 		while(it.hasNext()) {
 			if(it.next().createInstance(info) != null) {
-				it.next();
 				return it.previous().createInstance(info);
 			}
 		}

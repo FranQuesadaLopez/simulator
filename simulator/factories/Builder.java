@@ -7,8 +7,8 @@ public abstract class Builder<T> {
 	String typeTag;
 	String desc;
 	public T createInstance(JSONObject info) {
-		if(info.getString("type") == typeTag)
-			return createTheInstance(info);
+		if(info.getString("type").equals(typeTag))
+			return createTheInstance(info.getJSONObject("data"));
 		else
 			return null;
 	}

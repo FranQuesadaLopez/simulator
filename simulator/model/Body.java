@@ -52,19 +52,19 @@ public class Body {
 	void move(double t) {
 		if (_m == 0)
 			_a = new Vector2D();
-		else 
-			_a = new Vector2D(_f.scale(1/_m));
-		_p = _p.plus(_v.scale(t).plus(_a.scale(1/2).scale(t*t)));
-		_v = _v.plus(_a.scale(t));
+		else {
+			_p = _p.plus(_v.scale(t).plus(_a.scale(0.5).scale(t*t)));
+			_v = _v.plus(_a.scale(t));
+		}
 	}
 	
 	public JSONObject getState() {
 		JSONObject state = new JSONObject();
 		state.put("id", _id);
 		state.put("m", _m);
-		state.put("p", _p);
-		state.put("v", _v);
-		state.put("f", _f);
+		state.put("p", _p.asJSONArray());
+		state.put("v", _v.asJSONArray());
+		state.put("f", _f.asJSONArray());
 		return state;
 		//devuelve la siguiente información del cuerpo en formato JSON (como JSONObject)
 	}
