@@ -30,11 +30,11 @@ public class EpsilonEqualStates implements StateComparator{
 					Vector2D jo2_p = new Vector2D(jo2.getJSONArray("p").getDouble(0), jo2.getJSONArray("p").getDouble(1));
 					Vector2D jo1_f = new Vector2D(jo1.getJSONArray("f").getDouble(0), jo1.getJSONArray("f").getDouble(1));
 					Vector2D jo2_f = new Vector2D(jo2.getJSONArray("f").getDouble(0), jo2.getJSONArray("f").getDouble(1));
-					if(Math.abs(jo1.getDouble("mass") - jo2.getDouble("mass")) > eps ||
+					if( Math.abs(jo1.getDouble("m") - jo2.getDouble("m")) > eps ||
 					   jo1_v.distanceTo(jo2_v) > eps ||
 					   jo1_p.distanceTo(jo2_p) > eps ||
 					   jo1_f.distanceTo(jo2_f) > eps ||
-					   jo1.getString("id") != jo2.getString("id"))
+					   jo1.getString("id") == jo2.getString("id"))
 						break;
 					++i;
 				}

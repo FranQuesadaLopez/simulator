@@ -18,7 +18,7 @@ public class NewtonUniversalGravitationBuilder extends Builder<ForceLaws>{
 		if(info.has("G"))
 			G = info.getDouble("G");
 		else
-			G = 6.67e10-11;
+			G = 6.67*Math.pow(10, -11);
 		return new NewtonUniversalGravitation(G);
 	}
 	

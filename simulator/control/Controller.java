@@ -43,9 +43,8 @@ public class Controller {
 		p.println("{");
 		p.println("\"states\": [");
 		p.println(_ps.toString());
-		
-		for (int i = 0; i < n; ++i) {
-			_ps.advance();
+		_ps.advance();
+		for (int i = 1; i <= n; ++i) {
 			p.println("," + _ps.toString());
 			
 			if(expOutNotNull && !cmp.equal(ja.getJSONObject(i), _ps.getState())) {
@@ -60,6 +59,7 @@ public class Controller {
 				);
 				throw new DiferentStatesException(msg);
 			}
+			_ps.advance();
 		}
 
 		p.println("]");
