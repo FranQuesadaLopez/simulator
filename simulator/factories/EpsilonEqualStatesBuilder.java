@@ -8,7 +8,7 @@ import simulator.control.StateComparator;
 public class EpsilonEqualStatesBuilder extends Builder<StateComparator>{
 
 	public EpsilonEqualStatesBuilder() {
-		typeTag = "epseq";
+		typeTag = "espeq";
 		desc = "comparador de estados con modulo epsilon";
 	}
 	

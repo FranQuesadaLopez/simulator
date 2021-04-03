@@ -19,7 +19,7 @@ public class MassLossingBody extends Body{
 		c += t;
 		if(c >= _lossFrequency) {
 			c = 0;
-			_m -= _lossFactor;
+			_m *= 1-_lossFactor;
 		}
 	}
 
