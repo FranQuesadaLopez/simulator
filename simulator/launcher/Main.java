@@ -2,7 +2,10 @@ package simulator.launcher;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
@@ -37,10 +40,12 @@ public class Main {
 	private final static Double _dtimeDefaultValue = 2500.0;
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "espeq";
-	private final static String _outFileDefaultValue = "System.out";
+	private final static String _outputDefaultValue = null;
 
 	// some attributes to stores values corresponding to command-line parameters
 	//
+	private static OutputStream out = null;
+	private static InputStream expOut = null;
 	private static Double _dtime = null;
 	private static Integer _steps = null;
 	private static String _inFile = null;
@@ -72,7 +77,7 @@ public class Main {
 		_stateComparatorFactory = new BuilderBasedFactory<StateComparator>(stateComparator);
 	}
 
-	private static void parseArgs(String[] args) {
+	private static void parseArgs(String[] args) throws FileNotFoundException {
 
 		// define the valid command line options
 		//
@@ -187,12 +192,20 @@ public class Main {
 		}
 	}
 	
-	private static void parseOutFileOption(CommandLine line) {
-		_outFile = line.getOptionValue("o", _outFileDefaultValue);
+	private static void parseOutFileOption(CommandLine line) throws FileNotFoundException {
+		_outFile = line.getOptionValue("o");
+		if(_outFile == null)
+			out = System.out;
+		else
+			out = new FileOutputStream(new File(_outFile));
 	}
 	
-	private static void parseExpectedOutputOption(CommandLine line) {
+	private static void parseExpectedOutputOption(CommandLine line) throws FileNotFoundException {
 		_expectedOutput = line.getOptionValue("eo");
+		if(_expectedOutput == null)
+			expOut = null;
+		else
+			expOut = new FileInputStream(new File(_expectedOutput));
 	}
 
 	private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
@@ -275,12 +288,7 @@ public class Main {
 		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
 		Controller controller = new Controller(ps, _bodyFactory);
 		controller.loadBodies(new FileInputStream(new File(_inFile)));
-		FileInputStream expOut;
-		if(_expectedOutput == null)
-			expOut = null;
-		else
-			expOut = new FileInputStream(new File(_expectedOutput));
-		controller.run(_steps, new FileOutputStream(new File(_outFile)), expOut, cmp);	
+		controller.run(_steps, out, expOut, cmp);	
 	}
 
 	private static void start(String[] args) throws Exception {
