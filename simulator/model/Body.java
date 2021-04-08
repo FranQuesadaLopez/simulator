@@ -58,6 +58,13 @@ public class Body {
 		}
 	}
 	
+	boolean equals(Body b) {
+		if(this._id.equals(b._id)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public JSONObject getState() {
 		JSONObject state = new JSONObject();
 		state.put("id", _id);

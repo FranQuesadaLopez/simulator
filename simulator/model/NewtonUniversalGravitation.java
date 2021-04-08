@@ -26,7 +26,7 @@ public class NewtonUniversalGravitation implements ForceLaws{
 				Iterator<Body> it_j = bs.listIterator();
 				while(it_j.hasNext()) {
 					Body b2 = it_j.next();
-					if(b1._id != b2._id) 
+					if(!b1.equals(b2)) 
 						b1.addForce(calculateForceVector(b1, b2));	
 				}
 				b1._a = b1._f.scale(1/b1._m);

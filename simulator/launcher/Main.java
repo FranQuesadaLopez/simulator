@@ -40,8 +40,6 @@ public class Main {
 	private final static Double _dtimeDefaultValue = 2500.0;
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "espeq";
-	private final static String _outputDefaultValue = null;
-
 	// some attributes to stores values corresponding to command-line parameters
 	//
 	private static OutputStream out = null;
