@@ -11,7 +11,7 @@ import simulator.factories.*;
 
 public class Controller {
 	
-	private PhysicsSimulator _ps;//4
+	private PhysicsSimulator _ps;
 	private Factory<Body> _b;
 	
 	public Controller (PhysicsSimulator ps, Factory<Body> b) {
