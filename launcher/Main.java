@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,6 +34,7 @@ import simulator.factories.NoForceBuilder;
 import simulator.model.Body;
 import simulator.model.ForceLaws;
 import simulator.model.PhysicsSimulator;
+import simulator.view.MainWindow;
 
 public class Main {
 
@@ -290,7 +293,14 @@ public class Main {
 	}
 	
 	private static void startGUIMode() throws Exception{
-		
+		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
+		Controller controller = new Controller(ps, _bodyFactory);
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+			new MainWindow(controller);
+			}
+			});
 	}
 
 	private static void start(String[] args) throws Exception {
