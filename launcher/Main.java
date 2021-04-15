@@ -288,6 +288,10 @@ public class Main {
 		controller.loadBodies(new FileInputStream(new File(_inFile)));
 		controller.run(_steps, out, expOut, cmp);	
 	}
+	
+	private static void startGUIMode() throws Exception{
+		
+	}
 
 	private static void start(String[] args) throws Exception {
 		parseArgs(args);
