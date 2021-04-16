@@ -92,16 +92,21 @@ public class Main {
 		try {
 			CommandLine line = parser.parse(cmdLineOptions, args);
 
+			parseModeOption(line);
 			parseHelpOption(line, cmdLineOptions);
+			if(_mode.equals("batch")) {
+				parseOutFileOption(line);
+				parseStepOption(line);
+
+			}
 			parseInFileOption(line);
-			parseOutFileOption(line);
 			parseExpectedOutputOption(line);
 
-			parseStepOption(line);
+
 			parseDeltaTimeOption(line);
 			parseForceLawsOption(line);
 			parseStateComparatorOption(line);
-			parseModeOption(line);
+			
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -197,9 +202,6 @@ public class Main {
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
 		_inFile = line.getOptionValue("i");
-		if (_inFile == null) {
-			throw new ParseException("In batch mode an input file of bodies is required");
-		}
 	}
 	
 	private static void parseOutFileOption(CommandLine line) throws FileNotFoundException {
@@ -301,6 +303,9 @@ public class Main {
 	}
 
 	private static void startBatchMode() throws Exception {
+		if (_inFile == null) {
+			throw new ParseException("In batch mode an input file of bodies is required");
+		}
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
 		Controller controller = new Controller(ps, _bodyFactory);
@@ -311,6 +316,8 @@ public class Main {
 	private static void startGUIMode() throws Exception{
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		Controller controller = new Controller(ps, _bodyFactory);
+		if(!_inFile.equals(null))
+			controller.loadBodies(new FileInputStream(new File(_inFile)));
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
