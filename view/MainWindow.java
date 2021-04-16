@@ -11,9 +11,9 @@ import simulator.control.Controller;
 
 public class MainWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
-	private StatusBar statusBar;
-	private BodiesTabel bodiesTable;
-	private Viewer viewer;
+	//private StatusBar statusBar;
+	//private BodiesTabel bodiesTable;
+	//private Viewer viewer;
 	Controller _ctrl;
 	public MainWindow(Controller ctrl) {
 	super("Physics Simulator");
@@ -24,17 +24,17 @@ public class MainWindow extends JFrame{
 	JPanel mainPanel = new JPanel(new BorderLayout());
 	setContentPane(mainPanel);
 	ControlPanel controlPanel = new ControlPanel();
-	controlPanel.setPreferredSize();
+	//controlPanel.setPreferredSize();
 	mainPanel.add(controlPanel, BorderLayout.PAGE_START);
-	statusBar = new StatusBar(_ctrl);
-	statusBar.setPreferredSize();
-	mainPanel.add(statusBar, BorderLayout.PAGE_END);
-	bodiesTable = new BodiesTable(_ctrl);
-	bodiesTable.setPreferredSize();
-	viewer = new Viewer(_ctrl);
-	viewer.setPreferredSize();
-	JPanel bodies_viewer = new JPanel(new BoxLayout(bodiesTable, BoxLayout.Y_AXIS, viewer, BoxLayout.Y_AXIS));
-	mainPanel.add(bodies_viewer, BorderLayout.CENTER);
+	//statusBar = new StatusBar(_ctrl);
+	//statusBar.setPreferredSize();
+	//mainPanel.add(statusBar, BorderLayout.PAGE_END);
+	//bodiesTable = new BodiesTable(_ctrl);
+	//bodiesTable.setPreferredSize();
+	//viewer = new Viewer(_ctrl);
+	//viewer.setPreferredSize();
+	//JPanel bodies_viewer = new JPanel(new BoxLayout(bodiesTable, BoxLayout.Y_AXIS, viewer, BoxLayout.Y_AXIS));
+	//mainPanel.add(bodies_viewer, BorderLayout.CENTER);
 	
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.pack();
