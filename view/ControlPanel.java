@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
 
 import simulator.control.Controller;
 import simulator.model.Body;
@@ -30,8 +32,8 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	
 	private void initGUI() {
 		this.setLayout(new BorderLayout());
-		JPanel panel = new JPanel();
-		this.add(panel, BorderLayout.WEST);
+		JToolBar panel = new JToolBar();
+		this.add(panel);
 		JButton files_button = new JButton();
 		files_button.setIcon(loadImage("resources/icons/open.png"));
 		panel.add(files_button, BorderLayout.EAST);
@@ -47,8 +49,12 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		JLabel stepsLabel = new JLabel("Steps: ");
 		panel.add(stepsLabel);
 		JSpinner stepsSpinner = new JSpinner();
-		stepsSpinner.setPreferredSize(new Dimension(70, 27));
+		stepsSpinner.setPreferredSize(new Dimension(70, 10));
 		panel.add(stepsSpinner);
+		JLabel dtimeLabel = new JLabel("Delta-Time: ");
+		panel.add(dtimeLabel);
+		JTextField dtimevalue = new JTextField();
+		panel.add(dtimevalue);
 		// TODO Auto-generated method stub
 		
 	}
