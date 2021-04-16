@@ -2,6 +2,7 @@ package simulator.view;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -23,9 +24,10 @@ public class MainWindow extends JFrame{
 	private void initGUI() {
 	JPanel mainPanel = new JPanel(new BorderLayout());
 	setContentPane(mainPanel);
-	ControlPanel controlPanel = new ControlPanel();
+	mainPanel.setPreferredSize(new Dimension(1000, 600));
+	//ControlPanel controlPanel = new ControlPanel();
 	//controlPanel.setPreferredSize();
-	mainPanel.add(controlPanel, BorderLayout.PAGE_START);
+	//mainPanel.add(controlPanel, BorderLayout.PAGE_START);
 	//statusBar = new StatusBar(_ctrl);
 	//statusBar.setPreferredSize();
 	//mainPanel.add(statusBar, BorderLayout.PAGE_END);

@@ -30,7 +30,7 @@ public class BuilderBasedFactory <T> implements Factory<T>{
 				return it.previous().createInstance(info);
 			}
 		}
-		return null;
+		return null;//lanzar excepción
 	}
 
 	@Override

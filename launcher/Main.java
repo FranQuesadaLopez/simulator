@@ -43,6 +43,7 @@ public class Main {
 	private final static Double _dtimeDefaultValue = 2500.0;
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "espeq";
+	private final static String _modeDefaultValue = "batch";
 	// some attributes to stores values corresponding to command-line parameters
 	//
 	private static OutputStream out = null;
@@ -52,6 +53,7 @@ public class Main {
 	private static String _inFile = null;
 	private static String _outFile = null;
 	private static String _expectedOutput = null;
+	private static String _mode = null;
 	private static JSONObject _forceLawsInfo = null;
 	private static JSONObject _stateComparatorInfo = null;
 
@@ -99,6 +101,7 @@ public class Main {
 			parseDeltaTimeOption(line);
 			parseForceLawsOption(line);
 			parseStateComparatorOption(line);
+			parseModeOption(line);
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -156,6 +159,12 @@ public class Main {
 				.desc("State comparator to be used when comparing states. Possible values: "
 						+ factoryPossibleValues(_stateComparatorFactory) + ". Default value: '"
 						+ _stateComparatorDefaultValue + "'.")
+				.build());
+		
+		// mode
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+				.desc("Select batch mode or gui mode. Possible values: batch, gui. Default value: '"
+						+ _modeDefaultValue + "'.")
 				.build());
 
 		return cmdLineOptions;
@@ -228,6 +237,13 @@ public class Main {
 		catch (Exception e) {
 			throw new ParseException("Invalid number of steps: " + steps);
 		}
+	}
+	
+	private static void parseModeOption(CommandLine line) throws ParseException{
+		String mode = line.getOptionValue("m", _modeDefaultValue);
+		if(!mode.equals("batch") && !mode.equals("gui"))
+			throw new ParseException("Invalid mode: " + mode);
+		_mode = mode;
 	}
 
 	private static JSONObject parseWRTFactory(String v, Factory<?> factory) {
@@ -305,7 +321,10 @@ public class Main {
 
 	private static void start(String[] args) throws Exception {
 		parseArgs(args);
-		startBatchMode();
+		if(_mode.equals("batch"))
+			startBatchMode();
+		else
+			startGUIMode();
 	}
 
 	public static void main(String[] args) {
