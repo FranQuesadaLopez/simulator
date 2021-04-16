@@ -25,9 +25,9 @@ public class MainWindow extends JFrame{
 	JPanel mainPanel = new JPanel(new BorderLayout());
 	setContentPane(mainPanel);
 	mainPanel.setPreferredSize(new Dimension(1000, 600));
-	//ControlPanel controlPanel = new ControlPanel();
+	ControlPanel controlPanel = new ControlPanel(_ctrl);
 	//controlPanel.setPreferredSize(new Dimension(100, 100));
-	//mainPanel.add(controlPanel, BorderLayout.PAGE_START);
+	mainPanel.add(controlPanel, BorderLayout.PAGE_START);
 	//statusBar = new StatusBar(_ctrl);
 	//statusBar.setPreferredSize();
 	//mainPanel.add(statusBar, BorderLayout.PAGE_END);
