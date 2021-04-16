@@ -1,6 +1,7 @@
 package simulator.factories;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -11,10 +12,14 @@ public class BuilderBasedFactory <T> implements Factory<T>{
 	
 	List<Builder<T>> _builders;
 	List<JSONObject> info;
+	List<JSONObject> _factoryElements;
 	
 	public BuilderBasedFactory(List<Builder<T>> builders) {
 		_builders = builders;
 		info = new ArrayList<JSONObject>();
+		Iterator<Builder<T>> it = _builders.listIterator();
+		while(it.hasNext())
+			info.add(it.next().getBuilderInfo());
 	}
 
 	@Override
@@ -29,11 +34,9 @@ public class BuilderBasedFactory <T> implements Factory<T>{
 	}
 
 	@Override
-	public List<JSONObject> getInfo() {		
-		Iterator<Builder<T>> it = _builders.listIterator();
-		while(it.hasNext())
-			info.add(it.next().getBuilderInfo());
-		return info;
+	public List<JSONObject> getInfo() {	
+		_factoryElements = Collections.unmodifiableList(info);
+		return _factoryElements;
 	}
 
 }

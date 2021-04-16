@@ -45,7 +45,7 @@ public class PhysicsSimulator {
 		Iterator<Body> it = bodies.listIterator();
 		while(it.hasNext()) {
 			Body body = it.next();
-			if(body._id == b._id)
+			if(body.equals(b))
 				throw new IllegalArgumentException();
 		}
 		bodies.add(b);
