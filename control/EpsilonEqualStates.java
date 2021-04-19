@@ -24,17 +24,11 @@ public class EpsilonEqualStates implements StateComparator{
 				while(i < s1_b.length()) {
 					jo1 = s1_b.getJSONObject(i);
 					jo2 = s2_b.getJSONObject(i);
-					Vector2D jo1_v = new Vector2D(jo1.getJSONArray("v").getDouble(0), jo1.getJSONArray("v").getDouble(1));
-					Vector2D jo2_v = new Vector2D(jo2.getJSONArray("v").getDouble(0), jo2.getJSONArray("v").getDouble(1));
-					Vector2D jo1_p = new Vector2D(jo1.getJSONArray("p").getDouble(0), jo1.getJSONArray("p").getDouble(1));
-					Vector2D jo2_p = new Vector2D(jo2.getJSONArray("p").getDouble(0), jo2.getJSONArray("p").getDouble(1));
-					Vector2D jo1_f = new Vector2D(jo1.getJSONArray("f").getDouble(0), jo1.getJSONArray("f").getDouble(1));
-					Vector2D jo2_f = new Vector2D(jo2.getJSONArray("f").getDouble(0), jo2.getJSONArray("f").getDouble(1));
 					if( Math.abs(jo1.getDouble("m") - jo2.getDouble("m")) > eps ||
-					   jo1_v.distanceTo(jo2_v) > eps ||
-					   jo1_p.distanceTo(jo2_p) > eps ||
-					   jo1_f.distanceTo(jo2_f) > eps ||
-					   jo1.getString("id") == jo2.getString("id"))
+						!epsEqualVectors(jo1.getJSONArray("v"), jo2.getJSONArray("v")) ||
+						!epsEqualVectors(jo1.getJSONArray("p"), jo2.getJSONArray("p")) ||
+						!epsEqualVectors(jo1.getJSONArray("f"), jo2.getJSONArray("f")) ||
+					    !(jo1.getString("id").equals(jo2.getString("id"))))
 						break;
 					++i;
 				}
@@ -43,6 +37,16 @@ public class EpsilonEqualStates implements StateComparator{
 			}
 		}
 		return false;
+	}
+	
+	private boolean epsEqualVectors(JSONArray a1, JSONArray a2) {
+		if (a1.length() != a2.length())
+			return false;
+
+		Vector2D v1 = new Vector2D(a1.getDouble(0), a1.getDouble(1));
+		Vector2D v2 = new Vector2D(a2.getDouble(0), a2.getDouble(1));
+
+		return (v1.distanceTo(v2) <= eps);
 	}
 
 }

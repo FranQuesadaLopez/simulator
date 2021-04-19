@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,6 +34,7 @@ import simulator.factories.NoForceBuilder;
 import simulator.model.Body;
 import simulator.model.ForceLaws;
 import simulator.model.PhysicsSimulator;
+import simulator.view.MainWindow;
 
 public class Main {
 
@@ -40,6 +43,7 @@ public class Main {
 	private final static Double _dtimeDefaultValue = 2500.0;
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "espeq";
+	private final static String _modeDefaultValue = "batch";
 	// some attributes to stores values corresponding to command-line parameters
 	//
 	private static OutputStream out = null;
@@ -49,6 +53,7 @@ public class Main {
 	private static String _inFile = null;
 	private static String _outFile = null;
 	private static String _expectedOutput = null;
+	private static String _mode = null;
 	private static JSONObject _forceLawsInfo = null;
 	private static JSONObject _stateComparatorInfo = null;
 
@@ -87,15 +92,21 @@ public class Main {
 		try {
 			CommandLine line = parser.parse(cmdLineOptions, args);
 
+			parseModeOption(line);
 			parseHelpOption(line, cmdLineOptions);
+			if(_mode.equals("batch")) {
+				parseOutFileOption(line);
+				parseStepOption(line);
+
+			}
 			parseInFileOption(line);
-			parseOutFileOption(line);
 			parseExpectedOutputOption(line);
 
-			parseStepOption(line);
+
 			parseDeltaTimeOption(line);
 			parseForceLawsOption(line);
 			parseStateComparatorOption(line);
+			
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -154,6 +165,12 @@ public class Main {
 						+ factoryPossibleValues(_stateComparatorFactory) + ". Default value: '"
 						+ _stateComparatorDefaultValue + "'.")
 				.build());
+		
+		// mode
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+				.desc("Select batch mode or gui mode. Possible values: batch, gui. Default value: '"
+						+ _modeDefaultValue + "'.")
+				.build());
 
 		return cmdLineOptions;
 	}
@@ -185,9 +202,6 @@ public class Main {
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
 		_inFile = line.getOptionValue("i");
-		if (_inFile == null) {
-			throw new ParseException("In batch mode an input file of bodies is required");
-		}
 	}
 	
 	private static void parseOutFileOption(CommandLine line) throws FileNotFoundException {
@@ -225,6 +239,13 @@ public class Main {
 		catch (Exception e) {
 			throw new ParseException("Invalid number of steps: " + steps);
 		}
+	}
+	
+	private static void parseModeOption(CommandLine line) throws ParseException{
+		String mode = line.getOptionValue("m", _modeDefaultValue);
+		if(!mode.equals("batch") && !mode.equals("gui"))
+			throw new ParseException("Invalid mode: " + mode);
+		_mode = mode;
 	}
 
 	private static JSONObject parseWRTFactory(String v, Factory<?> factory) {
@@ -282,16 +303,35 @@ public class Main {
 	}
 
 	private static void startBatchMode() throws Exception {
+		if (_inFile == null) {
+			throw new ParseException("In batch mode an input file of bodies is required");
+		}
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
 		Controller controller = new Controller(ps, _bodyFactory, _forceLawsFactory);
 		controller.loadBodies(new FileInputStream(new File(_inFile)));
 		controller.run(_steps, out, expOut, cmp);	
 	}
+	
+	private static void startGUIMode() throws Exception{
+		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
+		Controller controller = new Controller(ps, _bodyFactory);
+		if(!_inFile.equals(null))
+			controller.loadBodies(new FileInputStream(new File(_inFile)));
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+			new MainWindow(controller);
+			}
+			});
+	}
 
 	private static void start(String[] args) throws Exception {
 		parseArgs(args);
-		startBatchMode();
+		if(_mode.equals("batch"))
+			startBatchMode();
+		else
+			startGUIMode();
 	}
 
 	public static void main(String[] args) {

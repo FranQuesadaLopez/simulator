@@ -81,7 +81,7 @@ public class Controller {
 						+ "The states \n"
 						+ ja.getJSONObject(i).toString()
 						+ "and\n"
-						+ _ps.getState().toString()
+						+ _ps.toString()
 						+ "are diferent\n"
 				);
 				throw new DiferentStatesException(msg);
