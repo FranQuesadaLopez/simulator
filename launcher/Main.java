@@ -284,7 +284,7 @@ public class Main {
 	private static void startBatchMode() throws Exception {
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		StateComparator cmp = _stateComparatorFactory.createInstance(_stateComparatorInfo);
-		Controller controller = new Controller(ps, _bodyFactory);
+		Controller controller = new Controller(ps, _bodyFactory, _forceLawsFactory);
 		controller.loadBodies(new FileInputStream(new File(_inFile)));
 		controller.run(_steps, out, expOut, cmp);	
 	}

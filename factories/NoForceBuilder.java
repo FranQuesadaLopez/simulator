@@ -8,8 +8,8 @@ import simulator.model.NoForce;
 public class NoForceBuilder extends Builder<ForceLaws>{
 
 	public NoForceBuilder() {
-		typeTag = "nf";
-		desc = "no se aplica ninguna fuerza";
+		typeTag = "ng";
+		desc = "No force";
 	}
 	
 	@Override

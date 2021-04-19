@@ -6,6 +6,7 @@ public abstract class Builder<T> {
 	
 	String typeTag;
 	String desc;
+	
 	public T createInstance(JSONObject info) {
 		if(info.getString("type").equals(typeTag))
 			return createTheInstance(info.getJSONObject("data"));
@@ -15,8 +16,8 @@ public abstract class Builder<T> {
 	public JSONObject getBuilderInfo() {
 		JSONObject builderinfo = new JSONObject();
 		builderinfo.put("type", typeTag);
-		builderinfo.put("desc", desc);
 		builderinfo.put("data", createData());
+		builderinfo.put("desc", desc);
 		return builderinfo;
 	}
 	JSONObject createData() {

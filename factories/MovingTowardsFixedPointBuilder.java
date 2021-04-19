@@ -10,7 +10,7 @@ public class MovingTowardsFixedPointBuilder extends Builder<ForceLaws>{
 
 	public MovingTowardsFixedPointBuilder() {
 		typeTag = "mtfp";
-		desc = "movimiento hacia un punto fijo en el espacio";
+		desc = "Moving towards a fixed point";
 	}
 	
 	@Override
@@ -33,8 +33,9 @@ public class MovingTowardsFixedPointBuilder extends Builder<ForceLaws>{
 	
 	public JSONObject createData() {
 		JSONObject data = new JSONObject();
-		data.put("c", "(opcional) centro fijo");
-		data.put("g", "(opcional) valor de la gravedad");
+		data.put("c", "the point towards wich bodies move"
+				    + "(a json of numbers, e.g. [100.0, 50.0])");
+		data.put("g", "the lenght of the acceleration vector (a number)");
 		return data;
 	}
 

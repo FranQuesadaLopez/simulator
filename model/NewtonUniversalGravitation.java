@@ -7,10 +7,10 @@ import simulator.misc.Vector2D;
 
 public class NewtonUniversalGravitation implements ForceLaws{
 	
-	private double G;
+	private double _G;
 	
-	public NewtonUniversalGravitation(double _G){
-		G = _G;
+	public NewtonUniversalGravitation(double G){
+		_G = G;
 	}
 	
 	@Override
@@ -37,8 +37,13 @@ public class NewtonUniversalGravitation implements ForceLaws{
 	private Vector2D calculateForceVector(Body b1, Body b2) {
 		if(b2._p.distanceTo(b1._p) == 0)
 			return new Vector2D();
-		double module = G * b1._m * b2._m / (b2._p.distanceTo(b1._p) * b2._p.distanceTo(b1._p));
+		double module = _G * b1._m * b2._m / (b2._p.distanceTo(b1._p) * b2._p.distanceTo(b1._p));
 		return ((b2._p.minus(b1._p)).direction()).scale(module);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Newton's Universal gravitation with G = %f", _G);
 	}
 
 }

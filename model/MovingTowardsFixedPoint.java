@@ -7,12 +7,12 @@ import simulator.misc.Vector2D;
 
 public class MovingTowardsFixedPoint implements ForceLaws{
 	
-	private double g;
-	private Vector2D O;
+	private double _g;
+	private Vector2D _O;
 	
-	public MovingTowardsFixedPoint(Vector2D origen, double _g){
-		g = _g;
-		O = new Vector2D(origen);
+	public MovingTowardsFixedPoint(Vector2D origen, double g){
+		_g = g;
+		_O = new Vector2D(origen);
 	}
 
 	@Override
@@ -21,10 +21,15 @@ public class MovingTowardsFixedPoint implements ForceLaws{
 		Iterator<Body> it = bs.listIterator();
 		while(it.hasNext()) {
 			Body b = it.next();
-			b.addForce(O.minus(b._p.direction().scale(g * b._m)));
+			b.addForce(_O.minus(b._p.direction().scale(_g * b._m)));
 			b._a = b._f.scale(1/b._m);
 		}
 		
 	}
-
+	
+	
+	@Override
+	public String toString() {
+		return String.format("Moving towards %s with constant acceleration %f", _O.toString(), _g);
+	}
 }
