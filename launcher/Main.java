@@ -315,7 +315,7 @@ public class Main {
 	
 	private static void startGUIMode() throws Exception{
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
-		Controller controller = new Controller(ps, _bodyFactory);
+		Controller controller = new Controller(ps, _bodyFactory, _forceLawsFactory);
 		if(!_inFile.equals(null))
 			controller.loadBodies(new FileInputStream(new File(_inFile)));
 		SwingUtilities.invokeAndWait(new Runnable() {
