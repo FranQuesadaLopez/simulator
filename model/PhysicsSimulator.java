@@ -16,18 +16,16 @@ public class PhysicsSimulator {
 	List<SimulatorObserver> observers;
 	
 	public PhysicsSimulator(double _dt, ForceLaws _fl) throws IllegalArgumentException{
-		reset();
-		
-		setDeltaTime(_dt);
-		setForceLaws(_fl);
 		t = 0.0;
 		bodies = new ArrayList<>();
 		observers = new ArrayList<>();
+		setDeltaTime(_dt);
+		setForceLaws(_fl);
+		reset();
 	}
 	
 	public void reset () {
 		bodies.clear();
-		setDeltaTime(0.0);
 		
 		for (SimulatorObserver o : observers)
 			o.onReset(bodies, t, dt, FL.toString());

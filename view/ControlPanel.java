@@ -3,6 +3,7 @@ package simulator.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import simulator.control.Controller;
@@ -35,7 +38,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		_ctrl = ctrl;
 		_stopped = true;
 		initGUI();
-		//_ctrl.addObserver(this);
+		_ctrl.addObserver(this);
 		}
 	
 	private void initGUI() {
@@ -56,7 +59,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		forcelaws_button.setIcon(loadImage("resources/icons/physics.png"));
 		forcelaws_button.setToolTipText("Choose the applied force law");
 		panel.add(forcelaws_button);
-		GestorBotonLeyesFuerza forcelaws_funct = new GestorBotonLeyesFuerza();
+		GestorBotonLeyesFuerza forcelaws_funct = new GestorBotonLeyesFuerza(this, _ctrl);
 		forcelaws_button.addActionListener(forcelaws_funct);
 		
 		
@@ -133,11 +136,22 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	}
 	
 	class GestorBotonLeyesFuerza implements ActionListener{
+		
+		ControlPanel ctrlpnl;
+		ForceLawsDialog forcelawsDialog;
+		Controller ctrl;
+		
+		GestorBotonLeyesFuerza(ControlPanel ctrlpnl, Controller ctrl){
+			this.ctrlpnl = ctrlpnl;
+			this.ctrl = ctrl;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			if(forcelawsDialog == null) {
+				forcelawsDialog = new ForceLawsDialog((Frame) SwingUtilities.getWindowAncestor(ctrlpnl), ctrl);
+			}
+			forcelawsDialog.open();
 		}
 		
 	}
