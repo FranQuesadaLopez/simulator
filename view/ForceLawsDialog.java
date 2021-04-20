@@ -23,7 +23,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.control.Controller;
@@ -101,6 +100,13 @@ public class ForceLawsDialog extends JDialog{
 		ok_cancel_optionsPanel.add(space);
 		JButton cancel = new JButton("Cancel");
 		ok_cancel_optionsPanel.add(cancel);
+		cancel.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ForceLawsDialog.this.setVisible(false);
+			}
+		});
 		
 		
 		
@@ -153,14 +159,11 @@ public class ForceLawsDialog extends JDialog{
 				}
 			}
 			JSONObject data = option.getJSONObject("data");
-			if(option.getString("type").equals("nlug")) {	
-				_data[0][2] = data.getString("G");
-			}
-			else {
-				if(option.getString("type").equals("mtfp")) {
-					_data[0][2] = data.getString("c");
-					_data[1][2] = data.getString("g");
-				}
+			int i = 0;
+			for(String key: data.keySet()) {
+				_data[i][0] = key;
+				_data[i][2] = data.getString(key);
+				++i;
 			}
 		}
 
