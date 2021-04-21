@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public class PhysicsSimulator {
 	
 	double dt;
-	ForceLaws FL;
+	public ForceLaws FL;
 	double t;
 	List<Body> bodies;
 	List<SimulatorObserver> observers;

@@ -53,6 +53,11 @@ public class Controller {
 	//TODO 
 	//Ejecuta n pasos del simulador sin escribir nada en consola.
 	//O pasarle un OutputStream que no escriba
+	
+	/*public void printDT() {
+		System.out.println(_ps.dt);
+	}*/
+	
 	public void run (int n, OutputStream out, InputStream expOut, StateComparator cmp)
 		throws DiferentStatesException {
 		

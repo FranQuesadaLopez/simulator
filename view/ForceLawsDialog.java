@@ -24,6 +24,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import simulator.control.Controller;
 
@@ -107,6 +108,27 @@ public class ForceLawsDialog extends JDialog{
 				ForceLawsDialog.this.setVisible(false);
 			}
 		});
+		ok.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSONObject option = _dataTableModel.option;
+				
+				String sData = "{";
+				JSONObject data = option.getJSONObject("data");
+				int i = 0;
+				for(String key: data.keySet()) {
+					//data.put(key, _dataTableModel._data[i][1]);
+					sData += (key + " : " + _dataTableModel._data[i][1] + ",");
+					++i;
+				}
+				sData = sData.substring(0, sData.length() - 1);
+				sData += "}";
+				option.put("data", new JSONObject(sData));
+				ctrl.setForceLaws(option);
+				ForceLawsDialog.this.setVisible(false);
+			}
+		});
 		
 		
 		
@@ -133,13 +155,11 @@ public class ForceLawsDialog extends JDialog{
 	
 	private class ForceLawsTableModel extends AbstractTableModel{
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		private String[] _header = { "Force", "Value", "Description" };
 		String[][] _data;
+		public JSONObject option;
 		JComboBox<String> forcesBox;
 
 		ForceLawsTableModel(JComboBox<String> forcesBox) {
@@ -151,7 +171,6 @@ public class ForceLawsDialog extends JDialog{
 		
 		public void writeData() {
 			clear();
-			JSONObject option = null;
 			for(JSONObject fl: ctrl.getForceLawsInfo()) {
 				if(fl.getString("desc").equals(forcesBox.getSelectedItem())) {
 					option = fl;
@@ -205,36 +224,6 @@ public class ForceLawsDialog extends JDialog{
 		@Override
 		public void setValueAt(Object o, int rowIndex, int columnIndex) {
 			_data[rowIndex][columnIndex] = o.toString();
-		}
-
-		// Method getData() returns a String corresponding to a JSON structure
-		// with column 1 as keys and column 2 as values.
-
-		// This method return the coIt is important to build it as a string, if
-		// we create a corresponding JSONObject and use put(key,value), all values
-		// will be added as string. This also means that if users want to add a
-		// string value they should add the quotes as well as part of the
-		// value (2nd column).
-		//
-		public String getData() {
-			StringBuilder s = new StringBuilder();
-			s.append('{');
-			for (int i = 0; i < _data.length; i++) {
-				if (!_data[i][0].isEmpty() && !_data[i][1].isEmpty()) {
-					s.append('"');
-					s.append(_data[i][0]);
-					s.append('"');
-					s.append(':');
-					s.append(_data[i][1]);
-					s.append(',');
-				}
-			}
-
-			if (s.length() > 1)
-				s.deleteCharAt(s.length() - 1);
-			s.append('}');
-
-			return s.toString();
 		}
 	}
 	
