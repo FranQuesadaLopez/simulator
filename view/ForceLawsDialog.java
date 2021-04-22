@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -35,6 +36,19 @@ public class ForceLawsDialog extends JDialog{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Controller ctrl;
+	private JPanel mainPanel;
+	private JPanel helpPanel;
+	private DefaultComboBoxModel<String> forcesBoxModel;
+	private JComboBox<String> forcesBox;
+	private ForceLawsTableModel _dataTableModel;
+	private JTable dataTable;
+	private JScrollPane tableScroll;
+	private JPanel forcesPanel;
+	private JLabel forceOptions;
+	private JPanel ok_cancel_optionsPanel;
+	private JButton ok;
+	private JButton cancel;
+	private JLabel space;
 
 	public ForceLawsDialog(Frame parent, Controller ctrl) {
 		super(parent, "Force Laws Selection", true);
@@ -43,24 +57,24 @@ public class ForceLawsDialog extends JDialog{
 	}
 
 	private void initGUI() {
-		JPanel mainPanel = new JPanel();
+		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		setContentPane(mainPanel);
 		
-		JPanel helpPanel = new JPanel(new FlowLayout());
+		helpPanel = new JPanel(new FlowLayout());
 		mainPanel.add(helpPanel);
 		JLabel helpMsg_1 = new JLabel("Select a force law and provide values for the parameters in the value column default values are used for (parameters with no value)");
 		helpPanel.add(helpMsg_1, FlowLayout.LEFT);
 		
-		DefaultComboBoxModel<String> forcesBoxModel = new DefaultComboBoxModel<String>();
+		forcesBoxModel = new DefaultComboBoxModel<String>();
 		List<JSONObject> fl_desc = ctrl.getForceLawsInfo();
 		for(JSONObject fl: fl_desc) {
 			forcesBoxModel.addElement(fl.getString("desc"));
 		}
-		JComboBox<String> forcesBox = new JComboBox<>(forcesBoxModel);
+		forcesBox = new JComboBox<>(forcesBoxModel);
 		
-		ForceLawsTableModel _dataTableModel = new ForceLawsTableModel(forcesBox);
-		JTable dataTable = new JTable(_dataTableModel) {
+		_dataTableModel = new ForceLawsTableModel();
+		dataTable = new JTable(_dataTableModel) {
 			private static final long serialVersionUID = 1L;
 
 			// we override prepareRenderer to resized rows to fit to content
@@ -78,13 +92,13 @@ public class ForceLawsDialog extends JDialog{
 		ComboBoxManager cbm = new ComboBoxManager(_dataTableModel);
 		forcesBox.addActionListener(cbm);
 		
-		JScrollPane tabelScroll = new JScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		tableScroll = new JScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		mainPanel.add(tabelScroll);
+		mainPanel.add(tableScroll);
 		
-		JPanel forcesPanel = new JPanel(new FlowLayout());
+		forcesPanel = new JPanel(new FlowLayout());
 		mainPanel.add(forcesPanel);		
-		JLabel forceOptions = new JLabel("Force Law: ");
+		forceOptions = new JLabel("Force Law: ");
 		forceOptions.setAlignmentX(CENTER_ALIGNMENT);
 		forcesPanel.add(forceOptions);
 		
@@ -93,13 +107,13 @@ public class ForceLawsDialog extends JDialog{
 		
 		forcesBox.setPreferredSize(new Dimension(200, 20));
 		
-		JPanel ok_cancel_optionsPanel = new JPanel(new FlowLayout());
+		ok_cancel_optionsPanel = new JPanel(new FlowLayout());
 		mainPanel.add(ok_cancel_optionsPanel);
-		JButton ok = new JButton("OK");
+		ok = new JButton("OK");
 		ok_cancel_optionsPanel.add(ok);
-		JLabel space = new JLabel("          ");
+		space = new JLabel("          ");
 		ok_cancel_optionsPanel.add(space);
-		JButton cancel = new JButton("Cancel");
+		cancel = new JButton("Cancel");
 		ok_cancel_optionsPanel.add(cancel);
 		cancel.addActionListener(new ActionListener() {
 
@@ -108,28 +122,11 @@ public class ForceLawsDialog extends JDialog{
 				ForceLawsDialog.this.setVisible(false);
 			}
 		});
-		ok.addActionListener(new ActionListener() {
+		
+		OkButtonManager ok_funct = new OkButtonManager();
+		ok.addActionListener(ok_funct);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JSONObject option = _dataTableModel.option;
-				
-				String sData = "{";
-				JSONObject data = option.getJSONObject("data");
-				int i = 0;
-				for(String key: data.keySet()) {
-					sData += (key + " : " + _dataTableModel._data[i][1] + ",");
-					++i;
-				}
-				sData = sData.substring(0, sData.length() - 1);
-				sData += "}";
-				option.put("data", new JSONObject(sData));
-				ctrl.setForceLaws(option);
-				ForceLawsDialog.this.setVisible(false);
-			}
-		});
-		
-		
+
 		
 		setPreferredSize(new Dimension(800, 500));
 		pack();
@@ -152,6 +149,28 @@ public class ForceLawsDialog extends JDialog{
 		
 	}
 	
+	private class OkButtonManager implements ActionListener{
+
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+				JSONObject option = _dataTableModel.option;
+
+				String sData = "{";
+				JSONObject data = option.getJSONObject("data");
+				int i = 0;
+				for(String key: data.keySet()) {
+					sData += (key + " : " + _dataTableModel._data[i][1] + ",");
+					++i;
+				}
+				sData = sData.substring(0, sData.length() - 1);
+				sData += "}";
+				option.put("data", new JSONObject(sData));
+				ctrl.setForceLaws(option);
+				ForceLawsDialog.this.setVisible(false);
+		}
+	}
+	
 	private class ForceLawsTableModel extends AbstractTableModel{
 
 		private static final long serialVersionUID = 1L;
@@ -159,10 +178,8 @@ public class ForceLawsDialog extends JDialog{
 		private String[] _header = { "Force", "Value", "Description" };
 		String[][] _data;
 		public JSONObject option;
-		JComboBox<String> forcesBox;
 
-		ForceLawsTableModel(JComboBox<String> forcesBox) {
-			this.forcesBox = forcesBox;
+		ForceLawsTableModel() {
 			_data = new String[5][3];
 			clear();
 			writeData();

@@ -26,6 +26,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.json.JSONException;
+
 import simulator.control.Controller;
 import simulator.model.Body;
 import simulator.model.SimulatorObserver;
@@ -46,7 +48,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	private JTextField dtimeTextField;
 	private JLabel space;
 	private int steps;
-	private int dt;
+	private int dt = 0;
 
 	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
@@ -115,6 +117,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		exit_button.setToolTipText("Closes the simulator");
 		panel.add(exit_button);
 		
+		//error messages
 		
 		
 		//files button listener instantiation
@@ -126,7 +129,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		forcelaws_button.addActionListener(forcelaws_funct);
 		
 		//delta time text field listener instantiation
-		DtimeTextFieldManager dListener = new DtimeTextFieldManager();
+		DtimeTextFieldManager dListener = new DtimeTextFieldManager(this);
 		dtimeTextField.addActionListener(dListener);
 		
 		//steps spinner listener instantiation
@@ -134,7 +137,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		stepsSpinner.addChangeListener(spinner_funct);
 		
 		//run button listener instantiation
-		RunButtonManager run_funct = new RunButtonManager();
+		RunButtonManager run_funct = new RunButtonManager(this);
 		run_button.addActionListener(run_funct);
 		
 		//stop button listener instantiation
@@ -181,18 +184,35 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(forcelawsDialog == null) {
+				try {
 				forcelawsDialog = new ForceLawsDialog((Frame) SwingUtilities.getWindowAncestor(ctrlpnl), _ctrl);
+				}
+				catch (Exception ex){
+					JOptionPane.showMessageDialog(ctrlpnl, "Force law couldn't be built. Check the values and write them down again. Press 'h' for help.", "Error", JOptionPane.ERROR_MESSAGE);
+
+				}
 			}
 			forcelawsDialog.open();
 		}
 
 	}
 
-	private class DtimeTextFieldManager implements ActionListener {
+	private class DtimeTextFieldManager implements ActionListener{
+		
+		ControlPanel ctrlpnl;
+		DtimeTextFieldManager(ControlPanel ctrlpnl){
+			this.ctrlpnl = ctrlpnl;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			dt = Integer.parseInt(dtimeTextField.getText());			
+			try {
+			dt = Integer.parseInt(dtimeTextField.getText());	
+			}
+			catch(NumberFormatException ex) {
+				JOptionPane.showMessageDialog(ctrlpnl, "Delta Time must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+
+			}
 		}	
 	}
 	
@@ -205,16 +225,36 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	}
 	
 	private class RunButtonManager implements ActionListener{
+		
+		ControlPanel ctrlpnl;
+		
+		RunButtonManager(ControlPanel ctrlpnl){
+			this.ctrlpnl = ctrlpnl;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_stopped = false;		
-			_ctrl.setDeltaTime(dt);
+			_stopped = false;	
+			try {
+				_ctrl.setDeltaTime(dt);
+			}
+			catch(NumberFormatException ex){
+				JOptionPane.showMessageDialog(ctrlpnl, "Delta Time must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch(IllegalArgumentException ex) {
+				JOptionPane.showMessageDialog(ctrlpnl, "Delta Time must be higher than 0", "Error", JOptionPane.ERROR_MESSAGE);
+				_stopped = true;
+			}
+			
 			files_button.setEnabled(false);
 			forcelaws_button.setEnabled(false);
 			exit_button.setEnabled(false);
 			stepsSpinner.setEnabled(false);
 			dtimeTextField.setEnabled(false);
+			if(steps < 0) {
+				JOptionPane.showMessageDialog(ctrlpnl, "Steps must be higher or equal to 0", "Error", JOptionPane.ERROR_MESSAGE);
+				_stopped = true;
+			}
 			run_sim(steps);
 		}
 		
