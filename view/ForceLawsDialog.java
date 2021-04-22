@@ -118,7 +118,6 @@ public class ForceLawsDialog extends JDialog{
 				JSONObject data = option.getJSONObject("data");
 				int i = 0;
 				for(String key: data.keySet()) {
-					//data.put(key, _dataTableModel._data[i][1]);
 					sData += (key + " : " + _dataTableModel._data[i][1] + ",");
 					++i;
 				}

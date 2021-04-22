@@ -71,7 +71,7 @@ public class Controller {
 			 expOutNotNull = true;
 		}
 		
-		PrintStream p = new PrintStream(out);
+		PrintStream p = new PrintStream(System.out);
 		p.println("{");
 		p.println("\"states\": [");
 		p.println(_ps.toString());

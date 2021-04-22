@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -33,6 +35,19 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	private Controller _ctrl;
 	private boolean _stopped;
 
+	private JButton files_button;
+	private JButton forcelaws_button;
+	private JButton run_button;
+	private JButton stop_button;
+	private JButton exit_button;
+	private JLabel stepsLabel;
+	private JSpinner stepsSpinner;
+	private JLabel dtimeLabel;
+	private JTextField dtimeTextField;
+	private JLabel space;
+	private int steps;
+	private int dt;
+
 	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
 		_stopped = true;
@@ -47,55 +62,55 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		this.add(panel);
 		
 		//button to choose bodies files
-		JButton files_button = new JButton();
+		files_button = new JButton();
 		files_button.setIcon(loadImage("resources/icons/open.png"));
 		files_button.setToolTipText("Load bodies file into the editor");
 		panel.add(files_button);
 		
 		
 		//button to choose force law
-		JButton forcelaws_button = new JButton();
+		forcelaws_button = new JButton();
 		forcelaws_button.setIcon(loadImage("resources/icons/physics.png"));
 		forcelaws_button.setToolTipText("Choose the applied force law");
 		panel.add(forcelaws_button);
 		
 		
 		//run button
-		JButton run_button = new JButton();
+		run_button = new JButton();
 		run_button.setIcon(loadImage("resources/icons/run.png"));
 		run_button.setToolTipText("Runs the simulator");
 		panel.add(run_button);
 		
 		
 		//stop button
-		JButton stop_button = new JButton();
+		stop_button = new JButton();
 		stop_button.setIcon(loadImage("resources/icons/stop.png"));
 		stop_button.setToolTipText("Stops the simulator");
 		panel.add(stop_button);
 		
 		//steps label
-		JLabel stepsLabel = new JLabel("Steps: ");
+		stepsLabel = new JLabel("Steps: ");
 		panel.add(stepsLabel);
 		
 		//steps input
-		JSpinner stepsSpinner = new JSpinner();
+		stepsSpinner = new JSpinner();
 		stepsSpinner.setPreferredSize(new Dimension(70, 10));
 		panel.add(stepsSpinner);
 		
 		//delta time label
-		JLabel dtimeLabel = new JLabel("Delta-Time: ");
+		dtimeLabel = new JLabel("Delta-Time: ");
 		panel.add(dtimeLabel);
 		
 		//delta time input
-		JTextField dtimevalue = new JTextField();
-		panel.add(dtimevalue);
+		dtimeTextField = new JTextField();
+		panel.add(dtimeTextField);
 		
 		//label used to generate space between components
-		JLabel space = new JLabel("                                                                                                                                                                       ");
+		space = new JLabel("                                                                                                                                                                       ");
 		panel.add(space);
 		
 		//exit button
-		JButton exit_button = new JButton();
+		exit_button = new JButton();
 		exit_button.setIcon(loadImage("resources/icons/exit.png"));
 		exit_button.setToolTipText("Closes the simulator");
 		panel.add(exit_button);
@@ -103,27 +118,27 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		
 		
 		//files button listener instantiation
-		FilesButtonManager files_funct = new FilesButtonManager(_ctrl);
+		FilesButtonManager files_funct = new FilesButtonManager();
 		files_button.addActionListener(files_funct);
 		
 		//force law button listener instantiation
-		ForceLawsButtonManager forcelaws_funct = new ForceLawsButtonManager(this, _ctrl);
+		ForceLawsButtonManager forcelaws_funct = new ForceLawsButtonManager(this);
 		forcelaws_button.addActionListener(forcelaws_funct);
 		
 		//delta time text field listener instantiation
-		DtimeTextFieldManager dListener = new DtimeTextFieldManager(dtimevalue);
-		dtimevalue.addActionListener(dListener);
+		DtimeTextFieldManager dListener = new DtimeTextFieldManager();
+		dtimeTextField.addActionListener(dListener);
 		
 		//steps spinner listener instantiation
-		StepsSpinnerManager spinner_funct = new StepsSpinnerManager(stepsSpinner);
+		StepsSpinnerManager spinner_funct = new StepsSpinnerManager();
 		stepsSpinner.addChangeListener(spinner_funct);
 		
 		//run button listener instantiation
-		RunButtonManager run_funct = new RunButtonManager(files_button, forcelaws_button, exit_button, _stopped, _ctrl, dListener);
+		RunButtonManager run_funct = new RunButtonManager();
 		run_button.addActionListener(run_funct);
 		
 		//stop button listener instantiation
-		StopButtonManager stop_funct = new StopButtonManager(files_button, forcelaws_button, exit_button);
+		StopButtonManager stop_funct = new StopButtonManager();
 		stop_button.addActionListener(stop_funct);
 		
 		//exit button listener instantiation
@@ -136,13 +151,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 		}
 	
-	class FilesButtonManager implements ActionListener{
-		
-		Controller ctrl;
-		
-		public FilesButtonManager(Controller ctrl) {
-			this.ctrl = ctrl;
-		}
+	class FilesButtonManager implements ActionListener{		
 		
 		@Override
 		public void actionPerformed(ActionEvent e){
@@ -152,7 +161,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 			int returnVal = filechooser.showOpenDialog(getParent());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				try {
-					ctrl.loadBodies(new FileInputStream(new File(filechooser.getSelectedFile().getPath())));
+					_ctrl.loadBodies(new FileInputStream(new File(filechooser.getSelectedFile().getPath())));
 				} 
 				catch(Exception e1) {	
 				}
@@ -164,17 +173,15 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 
 		ControlPanel ctrlpnl;
 		ForceLawsDialog forcelawsDialog;
-		Controller ctrl;
 
-		ForceLawsButtonManager(ControlPanel ctrlpnl, Controller ctrl){
+		ForceLawsButtonManager(ControlPanel ctrlpnl){
 			this.ctrlpnl = ctrlpnl;
-			this.ctrl = ctrl;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(forcelawsDialog == null) {
-				forcelawsDialog = new ForceLawsDialog((Frame) SwingUtilities.getWindowAncestor(ctrlpnl), ctrl);
+				forcelawsDialog = new ForceLawsDialog((Frame) SwingUtilities.getWindowAncestor(ctrlpnl), _ctrl);
 			}
 			forcelawsDialog.open();
 		}
@@ -182,92 +189,47 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	}
 
 	private class DtimeTextFieldManager implements ActionListener {
-		
-		int dt = 0;
-		JTextField dtime;
-
-		public DtimeTextFieldManager(JTextField dtime) {
-			this.dtime = dtime;
-		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			dt = Integer.parseInt(dtime.getText());
-			
-		}
-		
-		public int getDt() {
-			return dt;
-		}
-		
+			dt = Integer.parseInt(dtimeTextField.getText());			
+		}	
 	}
 	
 	private class StepsSpinnerManager implements ChangeListener{
-
-		int steps = 0;
-		JSpinner spinner;
 		
-		StepsSpinnerManager(JSpinner spinner){
-			this.spinner = spinner;
-		}
 		@Override
 		public void stateChanged(ChangeEvent e) {
-			steps = (int) spinner.getValue();
-		}
-		
-		public int getSteps() {
-			return steps;
+			steps = (int) stepsSpinner.getValue();
 		}
 	}
 	
 	private class RunButtonManager implements ActionListener{
-		
-		JButton filesButton;
-		JButton flButton;
-		JButton exitButton;
-		boolean stopped;
-		Controller ctrl;
-		DtimeTextFieldManager dListener;
-		
-		RunButtonManager(JButton filesButton, JButton flButton, JButton exitButton, boolean stopped, Controller ctrl, DtimeTextFieldManager dListener){
-			this.filesButton = filesButton;
-			this.flButton = flButton;
-			this.exitButton = exitButton;
-			this.stopped = stopped;
-			this.ctrl = ctrl;
-			this.dListener = dListener;
-		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopped = false;
-			
-			ctrl.setDeltaTime(dListener.getDt());
-			ctrl.printDT();
-			filesButton.setEnabled(false);
-			flButton.setEnabled(false);
-			exitButton.setEnabled(false);		
+			_stopped = false;		
+			_ctrl.setDeltaTime(dt);
+			files_button.setEnabled(false);
+			forcelaws_button.setEnabled(false);
+			exit_button.setEnabled(false);
+			stepsSpinner.setEnabled(false);
+			dtimeTextField.setEnabled(false);
+			run_sim(steps);
 		}
 		
 	}
 	
 	private class StopButtonManager implements ActionListener{
 
-		JButton filesButton;
-		JButton flButton;
-		JButton exitButton;
-		
-		StopButtonManager(JButton filesButton, JButton flButton, JButton exitButton){
-			this.filesButton = filesButton;
-			this.flButton = flButton;
-			this.exitButton = exitButton;
-		}
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			filesButton.setEnabled(true);
-			flButton.setEnabled(true);
-			exitButton.setEnabled(true);;
+			files_button.setEnabled(true);
+			forcelaws_button.setEnabled(true);
+			exit_button.setEnabled(true);
+			stepsSpinner.setEnabled(true);
+			dtimeTextField.setEnabled(true);
+			_stopped = true;
 			
 		}
 		
@@ -292,6 +254,42 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		}
 		
 	}
+	
+	
+	private void run_sim(int n) {
+		if (n > 0 && !_stopped) {
+			try {
+				_ctrl.run(0, new OutputStream() {
+					@Override
+					public void write(int b) throws IOException {
+					};
+				}
+				, null, null);
+			} catch (Exception e) {
+				// Muestra el error con una ventana JOptionPane
+				files_button.setEnabled(true);
+				forcelaws_button.setEnabled(true);
+				exit_button.setEnabled(true);
+				stepsSpinner.setEnabled(true);
+				dtimeTextField.setEnabled(true);
+				_stopped = true;
+				return;
+			}
+			SwingUtilities.invokeLater( new Runnable() {
+				@Override
+				public void run() {
+					run_sim(n-1);
+				} });
+		} else {
+			_stopped = true;
+			files_button.setEnabled(true);
+			forcelaws_button.setEnabled(true);
+			exit_button.setEnabled(true);
+			stepsSpinner.setEnabled(true);
+			dtimeTextField.setEnabled(true);
+		}
+	}
+
 
 	@Override
 	public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
