@@ -108,7 +108,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		panel.add(dtimeTextField);
 		
 		//label used to generate space between components
-		space = new JLabel("                                                                                                                                                                       ");
+		space = new JLabel(String.format("%50s", " "));
 		panel.add(space);
 		
 		//exit button
@@ -301,8 +301,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 			try {
 				_ctrl.run(0, new OutputStream() {
 					@Override
-					public void write(int b) throws IOException {
-					};
+					public void write(int b) throws IOException {};
 				}
 				, null, null);
 			} catch (Exception e) {

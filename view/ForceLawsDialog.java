@@ -31,9 +31,6 @@ import simulator.control.Controller;
 
 public class ForceLawsDialog extends JDialog{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Controller ctrl;
 	private JPanel mainPanel;

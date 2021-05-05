@@ -313,7 +313,7 @@ public class Main {
 		controller.run(_steps, out, expOut, cmp);	
 	}
 	
-	private static void startGUIMode() throws Exception{
+	private static void startGUIMode() throws Exception {
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		Controller controller = new Controller(ps, _bodyFactory, _forceLawsFactory);
 		if(!_inFile.equals(null))
@@ -323,7 +323,7 @@ public class Main {
 			public void run() {
 			new MainWindow(controller);
 			}
-			});
+		});
 	}
 
 	private static void start(String[] args) throws Exception {
