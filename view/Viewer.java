@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
 import simulator.control.Controller;
@@ -34,6 +35,8 @@ public class Viewer extends JComponent implements SimulatorObserver{
 	private List<Body> _bodies;
 	private boolean _showHelp;
 	private boolean _showVectors;
+	private String help1;
+	private String help2;
 	
 	Viewer(Controller ctrl) {
 		initGUI();
@@ -46,6 +49,8 @@ public class Viewer extends JComponent implements SimulatorObserver{
 		_scale = 1.0;
 		_showHelp = true;
 		_showVectors = true;
+		help1 = "h: toggle help, v: toggle vectors, +: zoom-in, -: zoom-out, =: fit";
+		help2 = "Scaling ratio: " + _scale;
 		//this.setSize(_WIDTH, _HEIGHT);
 		
 		addKeyListener(new KeyListener() {
@@ -122,11 +127,20 @@ public class Viewer extends JComponent implements SimulatorObserver{
 		_centerX = getWidth() / 2;
 		_centerY = getHeight() / 2;
 		
-		drawCrossAtCenter(g,_RED, 10, 10);
-		drawBody(g, 10, 10 , _BLUE, _GREEN);
+		drawCrossAtCenter(gr,_RED, 10, 10);
+		drawBody(gr, 10, 10 , _BLUE, _GREEN);
 		
+		if(_showHelp) {
+			drawHelp(gr, _RED, help1, help2);
+		}
 		// TODO draw help if _showHelp is true
 		
+	}
+	
+	private void drawHelp(Graphics g, Color helpColor, String help1, String help2) {
+		g.setColor(helpColor);
+		g.drawString(help1, 15, 28);
+		g.drawString(help2, 15, 45);
 	}
 	
 	// other private/protected methods
@@ -157,7 +171,7 @@ public class Viewer extends JComponent implements SimulatorObserver{
 			) {
 		g.setColor(bodiesColor);
 		for(Body b : _bodies) 
-			g.fillOval((int)b.getPosition().getX(), (int)b.getPosition().getY(), bHeight, bWidth);
+			g.fillOval(_centerX + (int) (b.getPosition().getX()/_scale), _centerY - (int) (b.getPosition().getY()/_scale), bHeight, bWidth);
 		
 		if(_showVectors) {
 			for(Body b : _bodies)
