@@ -28,6 +28,7 @@ public class Controller {
 	}
 
 	public void loadBodies(InputStream in) throws IllegalArgumentException{
+		reset();
 		JSONObject jsonInput = new JSONObject(new JSONTokener(in));
 		for(int i = 0; i < jsonInput.getJSONArray("bodies").length(); ++i) {
 			_ps.addBody(_b.createInstance(jsonInput.getJSONArray("bodies").getJSONObject(i)));
@@ -50,14 +51,6 @@ public class Controller {
 		this._ps.addObserver(o);
 	}
 	
-	//TODO 
-	//Ejecuta n pasos del simulador sin escribir nada en consola.
-	//O pasarle un OutputStream que no escriba
-	
-	/*public void printDT() {
-		System.out.println(_ps.dt);
-	}*/
-	
 	public void run (int n, OutputStream out, InputStream expOut, StateComparator cmp)
 		throws DiferentStatesException {
 		
@@ -71,7 +64,7 @@ public class Controller {
 			 expOutNotNull = true;
 		}
 		
-		PrintStream p = new PrintStream(System.out);
+		PrintStream p = new PrintStream(out);
 		p.println("{");
 		p.println("\"states\": [");
 		p.println(_ps.toString());

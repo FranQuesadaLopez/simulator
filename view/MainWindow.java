@@ -28,20 +28,20 @@ public class MainWindow extends JFrame{
 	private void initGUI() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		setContentPane(mainPanel);
-		mainPanel.setPreferredSize(new Dimension(1000, 600));
+		mainPanel.setPreferredSize(new Dimension(1100, 650));
 		ControlPanel controlPanel = new ControlPanel(_ctrl);
-		controlPanel.setPreferredSize(new Dimension(100, 100));
+		controlPanel.setPreferredSize(new Dimension(100, 50));
 		mainPanel.add(controlPanel, BorderLayout.PAGE_START);
 		_statusBar = new StatusBar(_ctrl);
-		_statusBar.setPreferredSize(new Dimension(20,100));
+		_statusBar.setPreferredSize(new Dimension(20,35));
 		mainPanel.add(_statusBar, BorderLayout.PAGE_END);
-		//_bodiesTable = new BodiesTable(_ctrl);
-		//_bodiesTable.setPreferredSize(new Dimension(100, 100));
+		_bodiesTable = new BodiesTable(_ctrl);
+		_bodiesTable.setPreferredSize(new Dimension(100, 100));
 		_viewer = new Viewer(_ctrl);
-		//_viewer.setPreferredSize(new Dimension(100, 100));
+		_viewer.setPreferredSize(new Dimension(100, 400));
 		JPanel bodies_viewer = new JPanel();
 		bodies_viewer.setLayout(new BoxLayout(bodies_viewer, BoxLayout.Y_AXIS));
-		//bodies_viewer.add(_bodiesTable);
+		bodies_viewer.add(_bodiesTable);
 		bodies_viewer.add(_viewer);
 		mainPanel.add(bodies_viewer, BorderLayout.CENTER);
 	

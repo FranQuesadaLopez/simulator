@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 
@@ -18,27 +19,36 @@ import simulator.control.Controller;
 import simulator.model.Body;
 import simulator.model.SimulatorObserver;
 
-@SuppressWarnings("serial")
 public class BodiesTable extends JPanel {
-	
+
+	private static final long serialVersionUID = 1L;
+	private JTable bodies_table;
+	private BodiesTableModel bodies_model;
+	private Controller ctrl;
+
 	BodiesTable(Controller ctrl) {
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createTitledBorder(
+		this.ctrl = ctrl;
+		initGUI();
+		this.setLayout(new BorderLayout());
+		this.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createLineBorder(Color.black, 2),
 				"Bodies",
 				TitledBorder.LEFT, TitledBorder.TOP));
-		JScrollPane bt = new JScrollPane(
-				new JTable(new BodiesTableModel(ctrl)), 
+		this.add(new JScrollPane(bodies_table, 
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		this.add(bt);
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+	}
+	
+	private void initGUI() {
+		bodies_model = new BodiesTableModel(ctrl);
+		bodies_table = new JTable(bodies_model);
 	}
 	
 	public class BodiesTableModel extends AbstractTableModel implements SimulatorObserver {
 
+		private static final long serialVersionUID = 1L;
 		private List<Body> _bodies;
 		private String[] _header = { "Id", "Mass", "Position", "Velocity", "Force" };
-		private String[][] _data;
 		
 		BodiesTableModel(Controller ctrl) {
 			_bodies = new ArrayList<>();
@@ -47,7 +57,7 @@ public class BodiesTable extends JPanel {
 		
 		@Override
 		public int getRowCount() {
-			return _data.length;
+			return _bodies.size();
 			
 		}
 		
@@ -63,7 +73,23 @@ public class BodiesTable extends JPanel {
 		
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			return _data[rowIndex][columnIndex];
+			Object s = null;
+			switch (columnIndex) {
+			case 0:
+				s = _bodies.get(rowIndex).getId();
+				break;
+			case 1:
+				s = _bodies.get(rowIndex).getMass();
+				break;
+			case 2:
+				s = _bodies.get(rowIndex).getPosition();
+				break;
+			case 3:
+				s = _bodies.get(rowIndex).getVelocity();
+			case 4:
+				s = _bodies.get(rowIndex).getForce();
+			}
+			return s;
 		}
 		
 		// SimulatorObserver methods
@@ -79,25 +105,45 @@ public class BodiesTable extends JPanel {
 
 		@Override
 		public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
-			_bodies = bodies;
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					_bodies = bodies;
+					fireTableStructureChanged();
+				}
+			});
 		}
 
 		@Override
 		public void onReset(List<Body> bodies, double time, double dt, String fLawsDesc) {
-			// TODO Auto-generated method stub
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					_bodies.clear();
+					fireTableStructureChanged();
+				}
+			});
 			
 		}
 
 		@Override
 		public void onBodyAdded(List<Body> bodies, Body b) {
-			// TODO Auto-generated method stub
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					_bodies.add(b);
+					fireTableStructureChanged();
+				}
+			});
 			
 		}
 
 		@Override
 		public void onAdvance(List<Body> bodies, double time) {
-			// TODO Auto-generated method stub
-			
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					_bodies = bodies;
+					fireTableStructureChanged();
+				}
+			});
+
 		}
 
 		@Override
