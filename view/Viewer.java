@@ -22,12 +22,14 @@ import simulator.model.SimulatorObserver;
 
 public class Viewer extends JComponent implements SimulatorObserver{
 	
+	private static final long serialVersionUID = 1L;
 	private static final int _WIDTH = 1000;
 	private static final int _HEIGHT = 1000;
 	
 	private static final Color _RED = new Color(255, 0, 0);
 	private static final Color _GREEN = new Color(0, 255, 0);
 	private static final Color _BLUE = new Color(0, 0, 255);
+	private static final Color _BLACK = new Color(0, 0, 0);
 	
 	private int _centerX;
 	private int _centerY;
@@ -127,8 +129,10 @@ public class Viewer extends JComponent implements SimulatorObserver{
 		_centerX = getWidth() / 2;
 		_centerY = getHeight() / 2;
 		
+		help2 = "Scaling ratio: " + _scale;
+		
 		drawCrossAtCenter(gr,_RED, 10, 10);
-		drawBody(gr, 10, 10 , _BLUE, _GREEN);
+		drawBody(gr, 10, 10 , _BLUE, _GREEN, _RED);
 		
 		if(_showHelp) {
 			drawHelp(gr, _RED, help1, help2);
@@ -167,16 +171,28 @@ public class Viewer extends JComponent implements SimulatorObserver{
 	
 	private void drawBody(
 			Graphics g, int bHeight, int bWidth, 
-			Color bodiesColor, Color arrowColor
+			Color bodiesColor, Color forceArrowColor, 
+			Color velocityArrowColor
 			) {
-		g.setColor(bodiesColor);
-		for(Body b : _bodies) 
-			g.fillOval(_centerX + (int) (b.getPosition().getX()/_scale), _centerY - (int) (b.getPosition().getY()/_scale), bHeight, bWidth);
 		
-		if(_showVectors) {
-			for(Body b : _bodies)
-				drawLineWithArrow(g, (int)b.getPosition().getX(),  (int)b.getPosition().getY(), (int)b.getVelocity().getX(), (int)b.getVelocity().getY(), 5 ,5, arrowColor);
+		for(Body b : _bodies) {
+			int bodyX = _centerX + (int) (b.getPosition().getX()/_scale);
+			int bodyY = _centerY - (int) (b.getPosition().getY()/_scale);
+			g.setColor(bodiesColor);			
+			g.fillOval(bodyX, bodyY, bHeight, bWidth);
+			g.setColor(_BLACK);
+			g.drawString(b.getId(), bodyX, bodyY);
 		}
+
+		if(_showVectors) {
+			for(Body b : _bodies) {
+				int bodyX = _centerX + (int) (b.getPosition().getX()/_scale);
+				int bodyY = _centerY - (int) (b.getPosition().getY()/_scale);
+				drawLineWithArrow(g, bodyX, bodyY, (int) (bodyX + (b.getForce().direction().getX()) * 25), (int) (bodyY + (b.getForce().direction().getY()) * 25), 5 ,5, forceArrowColor);
+				drawLineWithArrow(g, bodyX, bodyY, (int) (bodyX + (b.getVelocity().direction().getX()) * 25), (int) (bodyY + (b.getVelocity().direction().getY()) * 25), 5 ,5, velocityArrowColor);
+			}
+		}
+
 	}
 	
 	private void drawLineWithArrow(//

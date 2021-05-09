@@ -251,6 +251,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 			exit_button.setEnabled(false);
 			stepsSpinner.setEnabled(false);
 			dtimeTextField.setEnabled(false);
+			run_button.setEnabled(false);
 			if(steps < 0) {
 				JOptionPane.showMessageDialog(ctrlpnl, "Steps must be higher or equal to 0", "Error", JOptionPane.ERROR_MESSAGE);
 				_stopped = true;
@@ -269,6 +270,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 			exit_button.setEnabled(true);
 			stepsSpinner.setEnabled(true);
 			dtimeTextField.setEnabled(true);
+			run_button.setEnabled(true);
 			_stopped = true;
 			
 		}
@@ -311,6 +313,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 				exit_button.setEnabled(true);
 				stepsSpinner.setEnabled(true);
 				dtimeTextField.setEnabled(true);
+				run_button.setEnabled(true);
 				_stopped = true;
 				return;
 			}
@@ -326,6 +329,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 			exit_button.setEnabled(true);
 			stepsSpinner.setEnabled(true);
 			dtimeTextField.setEnabled(true);
+			run_button.setEnabled(true);
 		}
 	}
 
