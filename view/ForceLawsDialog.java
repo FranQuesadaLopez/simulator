@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -46,9 +47,11 @@ public class ForceLawsDialog extends JDialog{
 	private JButton ok;
 	private JButton cancel;
 	private JLabel space;
+	private Frame parent;
 
 	public ForceLawsDialog(Frame parent, Controller ctrl) {
 		super(parent, "Force Laws Selection", true);
+		this.parent = parent;
 		this.ctrl = ctrl;
 		initGUI();
 	}
@@ -148,9 +151,9 @@ public class ForceLawsDialog extends JDialog{
 	
 	private class OkButtonManager implements ActionListener{
 
-
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e){
+			try {
 				JSONObject option = _dataTableModel.option;
 
 				String sData = "{";
@@ -165,6 +168,12 @@ public class ForceLawsDialog extends JDialog{
 				option.put("data", new JSONObject(sData));
 				ctrl.setForceLaws(option);
 				ForceLawsDialog.this.setVisible(false);
+			}
+			catch(Exception ex) {
+				JOptionPane.showMessageDialog(parent, "You must introduce any value", "Error", JOptionPane.ERROR_MESSAGE);
+
+			}
+				
 		}
 	}
 	

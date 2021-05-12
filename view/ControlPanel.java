@@ -48,10 +48,11 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	private JTextField dtimeTextField;
 	private JLabel space;
 	private int steps;
-	private int dt = 0;
+	private double dt;
 
 	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
+		dt = 0;
 		_stopped = true;
 		initGUI();
 		_ctrl.addObserver(this);
@@ -105,8 +106,8 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		
 		//delta time input
 		dtimeTextField = new JTextField();
+		dtimeTextField.setText(Double.toString(dt));
 		panel.add(dtimeTextField);
-		
 		//label used to generate space between components
 		space = new JLabel(String.format("%50s", " "));
 		panel.add(space);
@@ -207,7 +208,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-			dt = Integer.parseInt(dtimeTextField.getText());	
+			dt = Double.parseDouble(dtimeTextField.getText());	
 			}
 			catch(NumberFormatException ex) {
 				JOptionPane.showMessageDialog(ctrlpnl, "Delta Time must be a number", "Error", JOptionPane.ERROR_MESSAGE);
@@ -335,14 +336,25 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 
 
 	@Override
-	public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
+	public void onRegister(List<Body> bodies, double time, double _dt, String fLawsDesc) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dtimeTextField.setText(Double.toString(_dt));
+				dt = _dt;
+			}
+		});
 		
 	}
 
 	@Override
-	public void onReset(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
+	public void onReset(List<Body> bodies, double time, double _dt, String fLawsDesc) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dtimeTextField.setText(Double.toString(_dt));
+				dt = _dt;
+			}
+		});
+		
 		
 	}
 
@@ -359,8 +371,13 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	}
 
 	@Override
-	public void onDeltaTimeChanged(double dt) {
-		// TODO Auto-generated method stub
+	public void onDeltaTimeChanged(double _dt) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dtimeTextField.setText(Double.toString(_dt));
+				dt = _dt;
+			}
+		});
 		
 	}
 

@@ -17,11 +17,12 @@ public class PhysicsSimulator {
 	
 	public PhysicsSimulator(double _dt, ForceLaws _fl) throws IllegalArgumentException{
 		t = 0.0;
+		dt = 0.0;
 		bodies = new ArrayList<>();
 		observers = new ArrayList<>();
+		reset();
 		setDeltaTime(_dt);
 		setForceLaws(_fl);
-		reset();
 	}
 	
 	public void reset () {
