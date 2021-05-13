@@ -171,7 +171,6 @@ public class ForceLawsDialog extends JDialog{
 			}
 			catch(Exception ex) {
 				JOptionPane.showMessageDialog(parent, "You must introduce any value", "Error", JOptionPane.ERROR_MESSAGE);
-
 			}
 				
 		}

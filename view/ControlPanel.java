@@ -49,10 +49,12 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 	private JLabel space;
 	private int steps;
 	private double dt;
+	private Frame parent;
 
 	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
 		dt = 0;
+		parent = (Frame) SwingUtilities.getWindowAncestor(this);
 		_stopped = true;
 		initGUI();
 		_ctrl.addObserver(this);
@@ -155,7 +157,9 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 		}
 	
-	class FilesButtonManager implements ActionListener{		
+	class FilesButtonManager implements ActionListener{	
+		
+		
 		
 		@Override
 		public void actionPerformed(ActionEvent e){
@@ -167,7 +171,8 @@ public class ControlPanel extends JPanel implements SimulatorObserver{
 				try {
 					_ctrl.loadBodies(new FileInputStream(new File(filechooser.getSelectedFile().getPath())));
 				} 
-				catch(Exception e1) {	
+				catch(Exception e1) {
+					JOptionPane.showMessageDialog(parent, "El archivo seleccionado no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
