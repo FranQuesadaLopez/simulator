@@ -163,7 +163,8 @@ public class ForceLawsDialog extends JDialog{
 					sData += (key + " : " + _dataTableModel._data[i][1] + ",");
 					++i;
 				}
-				sData = sData.substring(0, sData.length() - 1);
+				if(sData.length() != 1)
+					sData = sData.substring(0, sData.length() - 1);
 				sData += "}";
 				option.put("data", new JSONObject(sData));
 				ctrl.setForceLaws(option);
