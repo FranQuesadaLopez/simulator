@@ -86,8 +86,10 @@ public class BodiesTable extends JPanel {
 				break;
 			case 3:
 				s = _bodies.get(rowIndex).getVelocity();
+				break;
 			case 4:
 				s = _bodies.get(rowIndex).getForce();
+				break;
 			}
 			return s;
 		}
