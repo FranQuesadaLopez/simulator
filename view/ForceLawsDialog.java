@@ -187,7 +187,6 @@ public class ForceLawsDialog extends JDialog{
 
 		ForceLawsTableModel() {
 			_data = new String[5][3];
-			clear();
 			writeData();
 		}
 		
