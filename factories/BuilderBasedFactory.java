@@ -27,10 +27,11 @@ public class BuilderBasedFactory <T> implements Factory<T>{
 		ListIterator<Builder<T>> it = _builders.listIterator();
 		while(it.hasNext()) {
 			if(it.next().createInstance(info) != null) {
-				return it.previous().createInstance(info);
+				return it.previous().createInstance(info);		
 			}
 		}
-		return null;//lanzar excepción
+		throw new IllegalArgumentException("Invalid value for createInstance: " + info.toString());
+		//return null;//lanzar excepción
 	}
 
 	@Override

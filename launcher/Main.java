@@ -44,6 +44,7 @@ public class Main {
 	private final static String _forceLawsDefaultValue = "nlug";
 	private final static String _stateComparatorDefaultValue = "espeq";
 	private final static String _modeDefaultValue = "batch";
+	private final static String _inFileDefaultValue = null;
 	// some attributes to stores values corresponding to command-line parameters
 	//
 	private static OutputStream out = null;
@@ -316,7 +317,7 @@ public class Main {
 	private static void startGUIMode() throws Exception {
 		PhysicsSimulator ps = new PhysicsSimulator(_dtime, _forceLawsFactory.createInstance(_forceLawsInfo));
 		Controller controller = new Controller(ps, _bodyFactory, _forceLawsFactory);
-		if(!_inFile.equals(null))
+		if(_inFile != null)
 			controller.loadBodies(new FileInputStream(new File(_inFile)));
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
